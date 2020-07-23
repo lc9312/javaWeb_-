@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 设置mapper映射-->
+<mapper namespace="com.itheima.dao.system.UserDao">
+    <!--配置pojo属性与mysql中字段的对应关系-->
+    <resultMap id="UserResult" type="com.itheima.domain.system.User">
+        <id column="user_id" jdbcType="VARCHAR" property="id"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="state" jdbcType="DECIMAL" property="state"/>
+        <result column="gender" jdbcType="CHAR" property="gender"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="birthday" jdbcType="VARCHAR" property="birthday"/>
+        <result column="join_date" jdbcType="VARCHAR" property="joinDate"/>
+        <result column="dept_id" jdbcType="VARCHAR" property="deptId"/>
+
+        <association
+                property="dept"
+                column="dept_id"
+                javaType="com.itheima.domain.system.Dept"
+                select="com.itheima.dao.system.UserDao.findById"
+        />
+    </resultMap>
+
+    <!-- 配置公共查询语句 -->
+    <sql id="common_field" >
+               user_id, email, user_name,  password, state, gender, telephone, birthday, join_date, dept_id
+    </sql>
+
+    <!-- 配置查询所有 -->
+    <select id="findAll" resultMap="UserResult">
+        select
+          <include refid="common_field"/>
+        from
+          ss_user
+    </select>
+    <!-- 配置根据ID查询-->
+    <select id="findById" parameterType="com.itheima.domain.system.User" resultMap="UserResult">
+        select
+          <include refid="common_field" />
+        from
+          ss_user
+        where
+          user_id = #{id,jdbcType=VARCHAR}
+    </select>
+    <!-- 配置根据Id删除-->
+    <delete id="delete" parameterType="com.itheima.domain.system.User">
+        delete from ss_user where user_id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <!-- 配置INSERT INTO -->
+    <insert id="save" parameterType="com.itheima.domain.system.User">
+        INSERT INTO ss_user
+            (user_id, email, user_name,  password, state,
+        gender, telephone, birthday, join_date, dept_id)
+        VALUES
+            (#{id,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR}, #{state,jdbcType=DECIMAL}, #{gender,jdbcType=CHAR},
+        #{telephone,jdbcType=VARCHAR}, #{birthday,jdbcType=VARCHAR}, #{joinDate,jdbcType=VARCHAR},
+        #{deptId,jdbcType=VARCHAR}
+        )
+    </insert>
+    <!-- 配置更新字段-->
+    <update id="update" parameterType="com.itheima.domain.system.User">
+        update ss_user set
+            email = #{email,jdbcType=VARCHAR},
+            user_name = #{userName,jdbcType=VARCHAR},
+            password = #{password,jdbcType=VARCHAR},
+            state = #{state,jdbcType=DECIMAL},
+            gender = #{gender,jdbcType=CHAR},
+            telephone = #{telephone,jdbcType=VARCHAR},
+            birthday = #{birthday,jdbcType=VARCHAR},
+            join_date = #{joinDate,jdbcType=VARCHAR},
+            dept_id = #{deptId,jdbcType=VARCHAR}
+        where user_id = #{id,jdbcType=VARCHAR}
+    </update>
+</mapper>
+

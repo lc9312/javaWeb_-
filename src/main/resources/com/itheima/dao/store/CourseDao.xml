@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.dao.store.CourseDao">
+    <resultMap id="CourseMap" type="com.itheima.domain.store.Course">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <!--配置查询全字段-->
+    <sql id="common_sql">
+        id, name, remark, state, create_time
+    </sql>
+    <!--配置查询所有-->
+    <select id="findAll" resultMap="CourseMap">
+        select
+            <include refid="common_sql"/>
+        from
+            st_course
+    </select>
+    <!--配置查询根据id-->
+    <select id="findById" parameterType="java.lang.String" resultMap="CourseMap">
+        select
+            <include refid="common_sql"/>
+        from
+            st_course
+        where
+            id = #{id,jdbcType=VARCHAR}
+    </select>
+    <!--配置添加-->
+    <insert id="save" parameterType="com.itheima.domain.store.Course">
+        INSERT INTO st_course
+          (id, name, remark, state, create_time)
+        VALUES
+          (#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{state,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <!--配置删除-->
+    <delete id="delete" parameterType="com.itheima.domain.store.Course">
+        delete FROM st_course WHERE id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <!--配置修改-->
+    <update id="update" parameterType="com.itheima.domain.store.Course">
+        update st_course
+        set
+          name = #{name,jdbcType=VARCHAR},
+          remark = #{remark,jdbcType=VARCHAR},
+          state = #{state,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+</mapper>
