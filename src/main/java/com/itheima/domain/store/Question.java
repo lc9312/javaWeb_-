@@ -23,8 +23,18 @@ public class Question {
     private String reviewStatus;//审核状态  -1 审核不通过  0 审核中   1 审核通过
     private Date createTime;
 
+    private String picture;
+
     private Company company;
     private Catalog catalog;
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 
     public String getId() {
         return id;

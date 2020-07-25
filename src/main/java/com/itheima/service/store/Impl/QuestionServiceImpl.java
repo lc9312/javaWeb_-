@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class QuestionServiceImpl implements QuestionService {
     @Override
-    public void save(Question question) {
+    public void save(Question question,Boolean flag) {
         SqlSession sqlSession = null;
         try {
             // 1.获取sqlSession
@@ -27,8 +27,12 @@ public class QuestionServiceImpl implements QuestionService {
             Date date = new Date();
             question.setId(id);
             question.setCreateTime(date);
+            // 4.若上传图片,则将id作为添加的图片的名称
+            if(flag) {
+                question.setPicture(id);
+            }
             mapper.save(question);
-            // 4.提交事务
+            // 5.提交事务
             TransactionUtil.commit(sqlSession);
         } catch (Exception e) {
             if(sqlSession != null){
@@ -36,7 +40,7 @@ public class QuestionServiceImpl implements QuestionService {
             }
             throw new RuntimeException(e);
         } finally {
-            // 4.关闭资源
+            // 6.关闭资源
             if(sqlSession != null){
                 TransactionUtil.close(sqlSession);
             }
@@ -44,13 +48,17 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void update(Question question) {
+    public void update(Question question,Boolean flag) {
         SqlSession sqlSession = null;
         try {
             // 1.获取sqlSession
             sqlSession = MapperFactory.getSqlSession();
             // 2.获取Dao
             QuestionDao mapper = MapperFactory.getMapper(sqlSession, QuestionDao.class);
+            // 若有文件上传,则设置picture属性值
+            if(flag){
+                question.setPicture(question.getId());
+            }
             // 3.执行sql语句
             mapper.update(question);
             // 4.提交事务

@@ -11,14 +11,14 @@ public interface QuestionService {
      * @param quetion
      * @return
      */
-    public abstract void save(Question quetion);
+    public abstract void save(Question quetion,Boolean flag);
 
     /**
      * 修改
      * @param quetion
      * @return
      */
-    public abstract void update(Question quetion);
+    public abstract void update(Question quetion,Boolean flag);
 
     /**
      * 删除

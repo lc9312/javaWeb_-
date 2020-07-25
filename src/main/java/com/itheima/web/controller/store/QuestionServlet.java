@@ -7,12 +7,18 @@ import com.itheima.domain.store.Question;
 import com.itheima.domain.store.Course;
 import com.itheima.utils.BeanUtil;
 import com.itheima.web.controller.BaseServlet;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -31,15 +37,32 @@ public class QuestionServlet extends BaseServlet {
         }else if ("toAdd".equals(operation)){
             this.toAdd(req,resp);
         }else if ("save".equals(operation)){
-            this.save(req,resp);
+            try {
+                this.save(req,resp);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }else if ("delete".equals(operation)){
             this.delete(req,resp);
         }else if ("toEdit".equals(operation)){
             this.toEdit(req,resp);
         }else if ("edit".equals(operation)){
-            this.edit(req,resp);
+            try {
+                this.edit(req,resp);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else if ("toImgUpload".equals(operation)){
+            this.toImgUpload(req,resp);
+        }else if ("imgUpload".equals(operation)){
+            try {
+                this.imgUpload(req,resp);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
+
     public void list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // 初始化页码和每页的数据
         int page = 1;
@@ -74,12 +97,33 @@ public class QuestionServlet extends BaseServlet {
         req.getRequestDispatcher("/WEB-INF/pages/store/question/add.jsp").forward(req,resp);
     }
 
-    public void save(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // 1.封装页面传来的数据为对象
-        Question question = BeanUtil.fillBean(req, Question.class,"yyyy-MM-dd");
-        // 2.存入数据库
-        questionService.save(question);
-        // 3.请求转发
+    public void save(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        // 判断是否有文件上传的标记
+        Boolean flag = false;
+        //1.确认该操作是否支持文件上传操作，enctype="multipart/form-data"
+        if(ServletFileUpload.isMultipartContent(req)) {
+            //2.创建磁盘工厂对象
+            DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
+            //3.Servlet文件上传核心对象
+            ServletFileUpload servletFileUpload = new ServletFileUpload(diskFileItemFactory);
+            //4.从request中读取数据
+            List<FileItem> fileItems = servletFileUpload.parseRequest(req);
+            // 5.封装请求域对象
+            Question question = BeanUtil.fillBean(fileItems, Question.class);
+            // 6.设置标记位,若有文件上传则上传,无则将标记置为false
+            for (FileItem fileItem : fileItems) {
+                // 6.1 当前表单是否是文件表单
+                if(!fileItem.isFormField()) {
+                    // 6.2有文件标记置为true,并保存文件到服务器
+                    flag = true;
+                    fileItem.write(new File(req.getServletContext().getRealPath("file"),question.getId()));
+                }
+            }
+            // 7.调用业务层执行功能
+            questionService.save(question,flag);
+        }
+
+        // 8.请求转发到查询全部界面
         req.getRequestDispatcher(req.getContextPath()+"/store/question?operation=list").forward(req,resp);
     }
 
@@ -109,13 +153,61 @@ public class QuestionServlet extends BaseServlet {
         req.getRequestDispatcher("/WEB-INF/pages/store/question/update.jsp").forward(req,resp);
     }
 
-    public void edit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // 1.封装请求域对象
-        Question question = BeanUtil.fillBean(req, Question.class, "yyyy-MM-dd");
-        // 2.调用业务层执行修改功能
-        questionService.update(question);
-        // 3.返回到查询全部界面
+    public void edit(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        // 设置是否上传文件标记
+        Boolean flag = false;
+        //1.确认该操作是否支持文件上传操作，enctype="multipart/form-data"
+        if(ServletFileUpload.isMultipartContent(req)) {
+            //2.创建磁盘工厂对象
+            DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
+            //3.Servlet文件上传核心对象
+            ServletFileUpload servletFileUpload = new ServletFileUpload(diskFileItemFactory);
+            //4.从request中读取数据
+            List<FileItem> fileItems = servletFileUpload.parseRequest(req);
+            // 5.封装请求域对象
+            Question question = BeanUtil.fillBean(fileItems, Question.class);
+            // 6.保存文件
+            for (FileItem fileItem : fileItems) {
+                //7.1 当前表单是否是文件表单
+                if(!fileItem.isFormField()) {
+                    //7.2.有文件上传,则将flag设置为true,并从临时存储文件的地方将内容写入到指定位置
+                    flag = true;
+                    fileItem.write(new File(req.getServletContext().getRealPath("file"),question.getId()));
+                }
+            }
+            // 7.调用业务层执行功能
+            questionService.update(question,flag);
+
+        }
+
+        // 8.返回到查询全部界面
         req.getRequestDispatcher(req.getContextPath()+"/store/question?operation=list").forward(req,resp);
+    }
+
+    public void toImgUpload(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 跳转到文件上传测试界面
+        req.getRequestDispatcher("/WEB-INF/pages/store/question/imgUpload.jsp").forward(req,resp);
+    }
+
+
+    private void imgUpload(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        //1.确认该操作是否支持文件上传操作，enctype="multipart/form-data"
+        if(ServletFileUpload.isMultipartContent(req)) {
+            //2.创建磁盘工厂对象
+            DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
+            //3.Servlet文件上传核心对象
+            ServletFileUpload servletFileUpload = new ServletFileUpload(diskFileItemFactory);
+            //4.从request中读取数据
+            List<FileItem> fileItems = servletFileUpload.parseRequest(req);
+            for (FileItem fileItem : fileItems) {
+                System.out.println(fileItem);
+                //5.当前表单是否是文件表单
+                if(!fileItem.isFormField()) {
+                    //6.从临时存储文件的地方将内容写入到指定位置
+                    fileItem.write(new File(req.getServletContext().getRealPath("file"),fileItem.getName()));
+                }
+            }
+        }
     }
 
     @Override
