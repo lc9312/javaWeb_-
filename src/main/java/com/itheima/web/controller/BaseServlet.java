@@ -3,14 +3,8 @@ package com.itheima.web.controller;
 import com.itheima.dao.store.CompanyDao;
 import com.itheima.domain.store.Catalog;
 import com.itheima.domain.store.Question;
-import com.itheima.service.store.CatalogService;
-import com.itheima.service.store.CompanyService;
-import com.itheima.service.store.CourseService;
-import com.itheima.service.store.Impl.CatalogServiceImpl;
-import com.itheima.service.store.Impl.CompanyServiceImpl;
-import com.itheima.service.store.Impl.CourseServiceImpl;
-import com.itheima.service.store.Impl.QuestionServiceImpl;
-import com.itheima.service.store.QuestionService;
+import com.itheima.service.store.*;
+import com.itheima.service.store.Impl.*;
 import com.itheima.service.system.DeptService;
 import com.itheima.service.system.Impl.DeptServiceImpl;
 import com.itheima.service.system.Impl.UserServiceImpl;
@@ -34,6 +28,7 @@ public class BaseServlet extends HttpServlet {
      protected CourseService courseService;
      protected CatalogService catalogService;
      protected QuestionService questionService;
+     protected QuestionItemService questionItemService;
 
     @Override
     public void init() throws ServletException {
@@ -43,5 +38,6 @@ public class BaseServlet extends HttpServlet {
         courseService = new CourseServiceImpl();
         catalogService = new CatalogServiceImpl();
         questionService = new QuestionServiceImpl();
+        questionItemService = new QuestionItemServiceImpl();
     }
 }

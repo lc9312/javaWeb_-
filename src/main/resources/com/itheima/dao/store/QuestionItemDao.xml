@@ -16,10 +16,12 @@
     </sql>
 
     <!--配置查询所有，带条件-->
-    <select id="findAll" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="findByQuestionId" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+            <include refid="Base_Column_List"/>
         from st_question_item
+        where
+            question_id = #{questionId,jdbcType=VARCHAR}
     </select>
 
     <!--配置根据ID查询-->
@@ -56,11 +58,4 @@
         where id = #{id,jdbcType=VARCHAR}
     </update>
 
-    <!--根据题目id查询所有选项-->
-    <select id="findByQuestionId" resultMap="BaseResultMap" parameterType="string">
-        select
-        <include refid="Base_Column_List"/>
-        from st_question_item
-        where question_id = #{questionId}
-    </select>
 </mapper>
