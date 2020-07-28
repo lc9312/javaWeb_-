@@ -2,6 +2,7 @@ package com.itheima.web.controller.system;
 
 import com.github.pagehelper.PageInfo;
 import com.itheima.domain.system.Dept;
+import com.itheima.domain.system.Role;
 import com.itheima.domain.system.User;
 import com.itheima.utils.BeanUtil;
 import com.itheima.utils.MD5Util;
@@ -14,7 +15,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *  HttpServlet
@@ -38,6 +42,12 @@ public class UserServlet extends BaseServlet{
             this.edit(req,resp);
         }else if("delete".equals(operation)){
             this.delete(req,resp);
+        }else if("userRoleList".equals(operation)){
+            this.userRoleList(req,resp);
+        }else if("updateUserRole".equals(operation)){
+            this.updateUserRole(req,resp);
+        }else if("login".equals(operation)){
+            this.login(req,resp);
         }
     }
 
@@ -112,8 +122,54 @@ public class UserServlet extends BaseServlet{
         resp.sendRedirect(req.getContextPath()+"/system/user?operation=list");
     }
 
+    private void userRoleList(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        // 获取用户ID
+        String userId = req.getParameter("userId");
+        User user = userService.findById(userId);
+        // 调用业务层
+        List<Map> roleList = roleService.findRolesByUid(userId);
+        for (Map map : roleList) {
+            Set<String> keys = map.keySet();
+            for (String key : keys) {
+                System.out.println(key+":"+map.get(key));
+            }
+        }
+        req.setAttribute("roleList",roleList);
+        req.setAttribute("user",user);
+        // 回到用户角色列表
+        req.getRequestDispatcher("/WEB-INF/pages/system/user/role.jsp").forward(req,resp);
+    }
 
+    private void updateUserRole(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        // 获取用户ID,及其roleId
+        String userId = req.getParameter("userId");
+        String[] roleIds = req.getParameterValues("roleIds");
+        System.out.println(Arrays.toString(roleIds));
+        // 调用业务层,更新并保存用户的角色
+        roleService.updateUserRole(userId,roleIds);
+        // 回到用户角色列表
+        list(req,resp);
+    }
 
+    private void login(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        // 获取登录用户名,密码
+        String email = req.getParameter("email");
+        String passwordRaw = req.getParameter("password");
+        // 密码加密
+        String password = MD5Util.md5(passwordRaw);
+        // 调用业务层,查询用户
+        User user = userService.login(email, password);
+        // 登录验证
+        if( user == null ){
+            // 返回登录界面
+            resp.sendRedirect(req.getContextPath()+"/login.jsp");
+        }else { // 进入主界面
+            resp.sendRedirect(req.getContextPath()+"/login.jsp");
+        }
+
+        // 回到用户角色列表
+        list(req,resp);
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
