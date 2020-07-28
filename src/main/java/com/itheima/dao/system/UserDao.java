@@ -1,7 +1,10 @@
 package com.itheima.dao.system;
 
 import com.github.pagehelper.PageInfo;
+import com.itheima.domain.system.Module;
+import com.itheima.domain.system.Role;
 import com.itheima.domain.system.User;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -17,4 +20,8 @@ public interface UserDao {
     public abstract PageInfo findAll(Integer page, Integer pageSize);
 
     public abstract User findById(String id);
+
+    List<Role> getUserRoles(String userId);
+
+    User findByEmailAndPwd(@Param("email") String email,  @Param("password") String password);
 }

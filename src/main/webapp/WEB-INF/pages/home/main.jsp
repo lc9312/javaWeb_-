@@ -29,7 +29,7 @@
                 style="overflow:visible;"
                 scrolling="auto"
                 frameborder="no" height="100%" width="100%"
-                src="${ctx}/pages/home/home.jsp"></iframe>
+                src="${ctx}/system/user?operation=home"></iframe>
     </div>
     <!-- 内容区域 /-->
 

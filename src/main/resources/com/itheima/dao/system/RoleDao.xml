@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 设置mapper映射-->
+<mapper namespace="com.itheima.dao.system.RoleDao">
+    <!--配置pojo属性与mysql中字段的对应关系-->
+    <resultMap id="RoleResult" type="com.itheima.domain.system.Role">
+        <id column="role_id" jdbcType="VARCHAR" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+
+    </resultMap>
+
+    <!-- 配置公共查询语句 -->
+    <sql id="common_field" >
+          role_id, name, remark, create_time
+    </sql>
+
+    <!-- 配置查询所有 -->
+    <select id="findAll" resultMap="RoleResult">
+        select
+          <include refid="common_field"/>
+        from
+          ss_role
+    </select>
+    <!-- 配置根据ID查询-->
+    <select id="findById" parameterType="com.itheima.domain.system.Role" resultMap="RoleResult">
+        select
+          <include refid="common_field" />
+        from
+          ss_role
+        where
+          role_id = #{id,jdbcType=VARCHAR}
+    </select>
+    <!-- 配置根据Id删除-->
+    <delete id="delete" parameterType="com.itheima.domain.system.Role">
+        delete from ss_role where role_id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <!-- 配置INSERT INTO -->
+    <insert id="save" parameterType="com.itheima.domain.system.Role">
+        INSERT INTO ss_role
+            (role_id, name, remark,  create_time )
+        VALUES
+            (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <!-- 配置更新字段-->
+    <update id="update" parameterType="com.itheima.domain.system.Role">
+        update ss_role set
+        set name = #{name,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP}
+        where role_id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteModule" parameterType="string">
+        delete from ss_role_module where role_id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <insert id="updateRoleModule"  >
+        <if test="moduleIds.length > 0">
+            INSERT INTO ss_role_module
+            (role_id, module_id)
+            VALUES
+            <foreach collection="moduleIds" open="(#{roleId}," item="moduleId" close=")" separator="),(#{roleId}," >
+                #{moduleId}
+            </foreach>
+        </if>
+    </insert>
+    <!--<insert id="updateRoleModule" parameterType="map">-->
+    <!--insert into ss_role_module (role_id, module_id)-->
+    <!--values (#{roleId,jdbcType=VARCHAR}, #{moduleId,jdbcType=VARCHAR})-->
+    <!--</insert>-->
+    <!--  根据userId查询其所有角色  -->
+    <select id="findRolesByUid" resultType="java.util.Map" parameterType="string" >
+        select
+              role_id as id,
+              name as name,
+              case
+                  when role_id in ( SELECT role_id FROM ss_role_user where user_id = #{userId})
+                    then  'checked'
+                    else  ''
+                  end
+              as checked
+        from
+            ss_role
+    </select>
+    <!-- 根据userId删除角色 -->
+    <delete id="deleteRoleByUid" parameterType="string">
+        delete from ss_role_user where user_id = #{userId}
+    </delete>
+
+    <!-- 根据userId插入角色 -->
+    <insert id="saveUserRoles" parameterType="map">
+        insert into ss_role_user
+        (role_id, user_id)
+        VALUES
+          <foreach collection="roleIds" item="roleId" separator=",">
+              (#{roleId},#{userId})
+          </foreach>
+    </insert>
+</mapper>
+

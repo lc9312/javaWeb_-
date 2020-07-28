@@ -63,10 +63,10 @@
                             <button type="button" class="btn btn-default" title="删除" onclick='deleteById()'><i class="fa fa-trash-o"></i> 删除</button>
                             <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
                             <button type="button" class="btn btn-default" title="上传题目" onclick='location.href="${ctx}/store/question?operation=toImport"'><i class="fa fa-adn"></i> 上传题目</button>
-                            <button type="button" class="btn btn-default" title="导出题目" onclick=location.href="${ctx}/store/question?operation=toExport"> <i class="fa fa-download"></i>导出题目</button>
+                            <button type="button" class="btn btn-default" title="导出题目" onclick=location.href="${ctx}/store/question?operation=questionExport"> <i class="fa fa-download"></i>导出题目</button>
 
                             <%-- 测试文件上传按钮 --%>
-                            <button type="button" class="btn btn-default" title="测试文件上传" onclick='location.href="${ctx}/store/question?operation=toImgUpload"'><i class="fa fa-file-o"></i> 测试文件上传</button>
+                            <button style="display: none" type="button" class="btn btn-default" title="测试文件上传" onclick='location.href="${ctx}/store/question?operation=toImgUpload"'><i class="fa fa-file-o"></i> 测试文件上传</button>
 
                         </div>
                     </div>
@@ -127,6 +127,7 @@
                         </td>
                         <th class="text-center">
                             <button type="button" class="btn bg-olive btn-xs" onclick='location.href="${ctx}/store/question?operation=toEdit&id=${o.id}"'>编辑</button>
+                            <button type="button" class="btn bg-olive btn-xs" onclick='location.href="${ctx}/store/questionItem?operation=list&questionId=${o.id}"'>配置选项</button>
                             <button type="button" class="btn bg-olive btn-xs" onclick='location.href="${ctx}/store/question?operation=toExamine&id=${o.id}"'>审核</button>
                         </th>
                     </tr>

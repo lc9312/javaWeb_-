@@ -16,6 +16,23 @@ public class User {
 
     private Dept dept;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", email='" + email + '\'' +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", state=" + state +
+                ", gender='" + gender + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", birthday=" + birthday +
+                ", joinDate=" + joinDate +
+                ", deptId='" + deptId + '\'' +
+                ", dept=" + dept +
+                '}';
+    }
+
     public String getId() {
         return id;
     }

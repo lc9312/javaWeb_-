@@ -19,17 +19,8 @@
         var id = getCheckId()
         if(id) {
             if(confirm("你确认要删除此条记录吗？")) {
-                location.href="${ctx}/system/user?operation=delete&id="+id;
+                location.href="${ctx}/system/module?operation=delete&id="+id;
             }
-        }else{
-            alert("请勾选待处理的记录，且每次只能勾选一个")
-        }
-    }
-
-    function roleList() {
-        var id = getCheckId()
-        if(id) {
-            location.href="${ctx}/system/user?operation=userRoleList&userId="+id;
         }else{
             alert("请勾选待处理的记录，且每次只能勾选一个")
         }
@@ -40,26 +31,35 @@
 <section class="content-header">
     <h1>
         系统管理
-        <small>用户管理</small>
+        <small>模块管理</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="all-admin-index.html"><i class="fa fa-dashboard"></i> 首页</a></li>
     </ol>
 </section>
+<!-- 内容头部 /-->
+
+<!-- 正文区域 -->
 <section class="content">
+
+    <!-- .box-body -->
     <div class="box box-primary">
         <div class="box-header with-border">
-            <h3 class="box-title">用户列表</h3>
+            <h3 class="box-title">模块列表</h3>
         </div>
+
         <div class="box-body">
+
+            <!-- 数据表格 -->
             <div class="table-box">
+
+                <!--工具栏-->
                 <div class="pull-left">
                     <div class="form-group form-inline">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-default" title="新建" onclick='location.href="${ctx}/system/user?operation=toAdd"'><i class="fa fa-file-o"></i> 新建</button>
+                            <button type="button" class="btn btn-default" title="新建" onclick='location.href="${ctx}/system/module?operation=toAdd"'><i class="fa fa-file-o"></i> 新建</button>
                             <button type="button" class="btn btn-default" title="删除" onclick='deleteById()'><i class="fa fa-trash-o"></i> 删除</button>
                             <button type="button" class="btn btn-default" title="刷新" onclick="window.location.reload();"><i class="fa fa-refresh"></i> 刷新</button>
-                            <button type="button" class="btn btn-default" title="角色" onclick="roleList()"><i class="fa fa-user-circle-o"></i> 角色</button>
                         </div>
                     </div>
                 </div>
@@ -69,31 +69,34 @@
                         <span class="glyphicon glyphicon-search form-control-feedback"></span>
                     </div>
                 </div>
+                <!--工具栏/-->
+
+                <!--数据列表-->
                 <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
                     <thead>
                     <tr>
-                        <th class="" style="padding-right:0px;"></th>
-                        <th class="sorting">邮箱</th>
-                        <th class="sorting">用户名</th>
-                        <th class="sorting">性别</th>
-                        <th class="sorting">所属部门</th>
+                        <th class="" style="padding-right:0px;">
+                            <input type="checkbox" name="selid" onclick="checkAll('id',this)">
+                        </th>
+                        <th class="sorting">模块名</th>
+                        <th class="sorting">类型</th>
+                        <th class="sorting">上级模块</th>
+                        <th class="sorting">链接</th>
                         <th class="sorting">状态</th>
                         <th class="text-center">操作</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach items="${page.list}" var="item" varStatus="status">
-                    <tr>
-                        <td><input name="ids" value="${item.id}" type="checkbox"></td>
-                        <td>${item.email }</td>
-                        <td>${item.userName}</td>
-                        <td>${item.gender ==0?'男':'女'}</td>
-                        <td>${item.dept.deptName }</td>
-                        <td>${item.state  ==0?'停用':'启用'}</td>
-                        <th class="text-center">
-                            <button type="button" class="btn bg-olive btn-xs" onclick='location.href="${ctx}/system/user?operation=toEdit&id=${item.id}"'>编辑</button>
-                        </th>
-                    </tr>
+                    <c:forEach items="${page.list}" var="o"  varStatus="st">
+                        <tr>
+                            <td><input type="checkbox" name="id" value="${o.id }"/></td>
+                            <td><a href="#">${o.name}</a></td>
+                            <td>${o.ctype==0?'主菜单':o.ctype==1?'二级菜单':'按钮'}</td>
+                            <td>${o.module.name}</td>
+                            <td>${o.curl}</td>
+                            <td>${o.state==0?'停用':'启用'}</td>
+                            <th class="text-center"><button type="button" class="btn bg-olive btn-xs" onclick='location.href="${ctx}/system/module?operation=toEdit&id=${o.id}"'>编辑</button></th>
+                        </tr>
                     </c:forEach>
                     </tbody>
                 </table>
@@ -101,13 +104,11 @@
         </div>
         <div class="box-footer">
             <jsp:include page="../../common/page.jsp">
-                <jsp:param value="${ctx}/system/user?operation=list" name="pageUrl"/>
+                <jsp:param value="${ctx}/system/module?operation=list" name="pageUrl"/>
             </jsp:include>
         </div>
     </div>
-
 </section>
 </div>
 </body>
-
 </html>

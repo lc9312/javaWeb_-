@@ -7,7 +7,11 @@ import com.itheima.service.store.*;
 import com.itheima.service.store.Impl.*;
 import com.itheima.service.system.DeptService;
 import com.itheima.service.system.Impl.DeptServiceImpl;
+import com.itheima.service.system.Impl.ModuleServiceImpl;
+import com.itheima.service.system.Impl.RoleServiceImpl;
 import com.itheima.service.system.Impl.UserServiceImpl;
+import com.itheima.service.system.ModuleService;
+import com.itheima.service.system.RoleService;
 import com.itheima.service.system.UserService;
 
 import javax.servlet.ServletException;
@@ -29,6 +33,8 @@ public class BaseServlet extends HttpServlet {
      protected CatalogService catalogService;
      protected QuestionService questionService;
      protected QuestionItemService questionItemService;
+     protected RoleService roleService;
+     public ModuleService moduleService;
 
     @Override
     public void init() throws ServletException {
@@ -39,5 +45,7 @@ public class BaseServlet extends HttpServlet {
         catalogService = new CatalogServiceImpl();
         questionService = new QuestionServiceImpl();
         questionItemService = new QuestionItemServiceImpl();
+        roleService = new RoleServiceImpl();
+        moduleService = new ModuleServiceImpl();
     }
 }

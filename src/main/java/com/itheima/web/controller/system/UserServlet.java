@@ -2,6 +2,7 @@ package com.itheima.web.controller.system;
 
 import com.github.pagehelper.PageInfo;
 import com.itheima.domain.system.Dept;
+import com.itheima.domain.system.Module;
 import com.itheima.domain.system.Role;
 import com.itheima.domain.system.User;
 import com.itheima.utils.BeanUtil;
@@ -48,6 +49,10 @@ public class UserServlet extends BaseServlet{
             this.updateUserRole(req,resp);
         }else if("login".equals(operation)){
             this.login(req,resp);
+        }else if("home".equals(operation)){
+            this.home(req,resp);
+        }else if("logout".equals(operation)){
+            this.logout(req,resp);
         }
     }
 
@@ -162,13 +167,32 @@ public class UserServlet extends BaseServlet{
         // 登录验证
         if( user == null ){
             // 返回登录界面
-            resp.sendRedirect(req.getContextPath()+"/login.jsp");
+            resp.sendRedirect("/login.jsp");
         }else { // 进入主界面
-            resp.sendRedirect(req.getContextPath()+"/login.jsp");
+            req.getSession().setAttribute("loginUser",user);
+            // 查询用户对应的所有模块
+            List<Module> moduleList = userService.finAllModuleByUid(user.getId());
+            req.setAttribute("moduleList",moduleList);
+            //当前登录用户对应的可操作模块的所有url拼接成一个大的字符串
+            StringBuilder sbf = new StringBuilder();
+            for (Module module : moduleList) {
+                sbf.append(module.getCurl());
+                sbf.append(',');
+            }
+            req.getSession().setAttribute("authorStr",sbf.toString());
+            req.getRequestDispatcher("/WEB-INF/pages/home/main.jsp").forward(req, resp);
         }
+    }
 
-        // 回到用户角色列表
-        list(req,resp);
+    private void logout(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        // 清除用户信息
+        // 返回登录界面
+        resp.sendRedirect("/login.jsp");
+    }
+
+    private void home(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        // 转到home界面
+        req.getRequestDispatcher("/WEB-INF/pages/home/home.jsp").forward(req, resp);
     }
 
     @Override

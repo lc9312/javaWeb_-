@@ -74,5 +74,15 @@
             dept_id = #{deptId,jdbcType=VARCHAR}
         where user_id = #{id,jdbcType=VARCHAR}
     </update>
+
+    <select id="findByEmailAndPwd" parameterType="com.itheima.domain.system.User" resultMap="UserResult">
+        select
+           <include refid="common_field" />
+        from
+             ss_user
+        where
+             email = #{email,jdbcType=VARCHAR} and password = #{password,jdbcType=VARCHAR}
+    </select>
+
 </mapper>
 

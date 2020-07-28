@@ -23,13 +23,13 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <a href="${pageContext.request.contextPath}/login.jsp">黑马面面后台管理系统</a>
+        <a href="${pageContext.request.contextPath}/loginjsp">黑马面面后台管理系统</a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
         <p class="login-box-msg">登录系统</p>
-        <%--<form action="${pageContext.request.contextPath}/login?operation=login" method="post">--%>
-        <form action="${pageContext.request.contextPath}/pages/home/main.jsp" method="post">
+        <form action="${pageContext.request.contextPath}/system/user?operation=login" method="post">
+        <%--<form action="${pageContext.request.contextPath}/pages/home/main.jsp" method="post">--%>
             <div class="form-group has-feedback">
                 <input type="email" name="email" class="form-control" placeholder="Email" value="test@itcast.cn">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>

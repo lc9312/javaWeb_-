@@ -30,7 +30,7 @@
                 <div class="tab-content">
                     <form id="editForm" action="${ctx}/store/catalog?operation=edit" method="post">
                         <input type="hidden" name="id" value="${catalog.id}">
-                        <input type="hidden" id="courseName" name="courseName" value="${catalog.name}">
+
                         <div class="tab-pane active" id="tab-form">
                             <div class="row data-type">
                                 <div class="col-md-2 title">所属学科</div>

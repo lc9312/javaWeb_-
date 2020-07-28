@@ -15,9 +15,11 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -60,6 +62,8 @@ public class QuestionServlet extends BaseServlet {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }else if ("questionExport".equals(operation)){
+            this.questionExport(req,resp);
         }
     }
 
@@ -208,6 +212,23 @@ public class QuestionServlet extends BaseServlet {
                 }
             }
         }
+    }
+
+    private void questionExport(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // 调用业务层完成题目报表的获取
+        ByteArrayOutputStream report = questionService.getReport();
+        // 设置响应的文件及响应头等信息,此步骤必须在获取响应输出流之前
+        resp.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
+        String fileName = new String("题目报表.xlsx".getBytes(),"iso8859-1");
+        resp.setHeader("Content-Disposition","attachment;fileName="+fileName);
+        // 获取响应输出流
+        ServletOutputStream os = resp.getOutputStream();
+        // 将报表写入响应输出流
+        report.writeTo(os);
+        // 将输出流刷新,关闭资源
+        os.flush();
+        os.close();
+        report.close();
     }
 
     @Override

@@ -14,9 +14,11 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
 </head>
+<script src="/plugins/common.js"></script>
 <script>
     function deleteById() {
-        var id = getCheckId()
+        let id = getCheckId()
+        console.log(id);
         if(id) {
             if(confirm("你确认要删除此条记录吗？")) {
                 location.href="${ctx}/system/user?operation=delete&id="+id;
@@ -27,8 +29,10 @@
     }
 
     function roleList() {
-        var id = getCheckId()
+        let id = getCheckId()
+        console.log(id)
         if(id) {
+        // if(true) {
             location.href="${ctx}/system/user?operation=userRoleList&userId="+id;
         }else{
             alert("请勾选待处理的记录，且每次只能勾选一个")
@@ -72,7 +76,7 @@
                 <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
                     <thead>
                     <tr>
-                        <th class="" style="padding-right:0px;"></th>
+                        <th class="" style="padding-right:0px;" ></th>
                         <th class="sorting">邮箱</th>
                         <th class="sorting">用户名</th>
                         <th class="sorting">性别</th>
@@ -84,7 +88,7 @@
                     <tbody>
                     <c:forEach items="${page.list}" var="item" varStatus="status">
                     <tr>
-                        <td><input name="ids" value="${item.id}" type="checkbox"></td>
+                        <td><input class="cls1" name="ids" value="${item.id}" type="checkbox" ></td>
                         <td>${item.email }</td>
                         <td>${item.userName}</td>
                         <td>${item.gender ==0?'男':'女'}</td>
